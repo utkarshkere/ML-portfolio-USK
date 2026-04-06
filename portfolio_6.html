@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utkarsh Kere — Data Science Portfolio</title>
+
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f5;
+    --muted: #7a7a8a;
+    --accent: #6c63ff;
+    --accent2: #00e5a0;
+    --accent3: #ff6b6b;
+    --amber: #f5a623;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── grid bg ── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── glow orbs ── */
+  .orb1, .orb2 {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,0.08); top: -200px; right: -200px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(0,229,160,0.06); bottom: 0; left: -100px; }
+
+  /* ── layout ── */
+  .wrapper { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ── nav ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 0;
+    background: rgba(10,10,15,0.8);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .inner { max-width: 980px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+  .nav-brand { font-family: var(--font-serif); font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.01em; }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; letter-spacing: 0.02em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  .hero { padding: 100px 0 40px; }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent2); }
+  .hero h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 7vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-desc { font-size: 17px; color: var(--muted); max-width: 520px; line-height: 1.8; margin-bottom: 1.5rem; }
+  .hero-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 6px 14px;
+    border: 1px solid var(--border2);
+    border-radius: 100px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── stats bar ── */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    margin-bottom: 5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+  .stat { }
+  .stat-num {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .stat-num span { font-size: 20px; color: var(--accent2); }
+  .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 0.03em; }
+
+  /* ── section titles ── */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); opacity: 0.5; }
+  section { margin-bottom: 5rem; }
+
+  /* ── project cards ── */
+  .project { margin-bottom: 2px; }
+  .project-header {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 2.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .project-header:hover { border-color: var(--border2); background: var(--bg3); }
+  .project-header:hover::before { opacity: 1; }
+  .project.open .project-header { border-color: rgba(108,99,255,0.3); background: var(--bg3); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .project.open .project-header::before { opacity: 1; }
+  .ph-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; }
+  .ph-left { flex: 1; }
+  .ph-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .ph-title { font-family: var(--font-serif); font-size: 24px; line-height: 1.2; margin-bottom: 8px; }
+  .ph-sub { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
+  .ph-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .b-purple { background: rgba(108,99,255,0.15); color: #9b94ff; border: 1px solid rgba(108,99,255,0.2); }
+  .b-green  { background: rgba(0,229,160,0.1);  color: #00e5a0; border: 1px solid rgba(0,229,160,0.2); }
+  .b-amber  { background: rgba(245,166,35,0.1); color: #f5a623; border: 1px solid rgba(245,166,35,0.2); }
+  .b-red    { background: rgba(255,107,107,0.1);color: #ff6b6b; border: 1px solid rgba(255,107,107,0.2); }
+  .ph-right { text-align: right; flex-shrink: 0; }
+  .ph-score-label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .ph-score { font-family: var(--font-serif); font-size: 40px; color: var(--text); line-height: 1; }
+  .ph-delta { font-family: var(--font-mono); font-size: 11px; color: var(--accent2); margin-top: 4px; }
+  .ph-toggle { margin-top: 1rem; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .toggle-icon { font-size: 16px; transition: transform 0.3s; }
+  .project.open .toggle-icon { transform: rotate(180deg); }
+
+  /* ── project details ── */
+  .project-details {
+    background: var(--bg3);
+    border: 1px solid rgba(108,99,255,0.3);
+    border-top: none;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    padding: 2rem 2.5rem;
+    display: none;
+  }
+  .project.open .project-details { display: block; animation: slideDown 0.3s ease; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+  .detail-block-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-key { color: var(--muted); }
+  .detail-val { color: var(--text); font-weight: 500; font-family: var(--font-mono); font-size: 12px; }
+
+  /* ── progress bars ── */
+  .prog-section { margin-top: 2rem; }
+  .prog-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  .prog-item { margin-bottom: 16px; }
+  .prog-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: var(--muted); }
+  .prog-label span:last-child { font-family: var(--font-mono); color: var(--text); }
+  .prog-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .fill-blue   { background: linear-gradient(90deg, var(--accent), #9b94ff); }
+  .fill-green  { background: linear-gradient(90deg, #00b377, var(--accent2)); }
+  .fill-amber  { background: linear-gradient(90deg, #c8831c, var(--amber)); }
+  .fill-red    { background: linear-gradient(90deg, #c94040, var(--accent3)); }
+
+  /* ── skills ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .skill-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .skill-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .skill-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .skill-type { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
+  .skill-dot { width: 6px; height: 6px; border-radius: 50%; margin-bottom: 10px; }
+
+  /* ── timeline ── */
+  .timeline { position: relative; padding-left: 2rem; }
+  .timeline::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 2rem; }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 6px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    background: var(--accent);
+  }
+  .tl-item.pending::before { background: var(--bg3); border-color: var(--muted); }
+  .tl-date { font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+  .tl-title { font-size: 15px; font-weight: 500; margin-bottom: 3px; }
+  .tl-desc { font-size: 13px; color: var(--muted); }
+  .tl-score { display: inline-block; font-family: var(--font-mono); font-size: 11px; color: var(--accent2); background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.15); border-radius: 100px; padding: 2px 10px; margin-top: 6px; }
+
+  /* ── recruiter section ── */
+  .recruiter-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .recruiter-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .recruiter-title { font-family: var(--font-serif); font-size: 28px; margin-bottom: 0.75rem; }
+  .recruiter-desc { color: var(--muted); font-size: 15px; max-width: 560px; line-height: 1.8; margin-bottom: 1.5rem; }
+  .recruiter-points { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .rp {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .rp-dot { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); margin-top: 7px; }
+  .rp strong { color: var(--text); font-weight: 500; }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* ── footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── fade in animations ── */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .details-grid { grid-template-columns: 1fr; }
+    .ph-top { flex-direction: column; }
+    .ph-right { text-align: left; }
+    .nav-links { display: none; }
+  }
+
+  /* ── skill categories (expandable) ── */
+  .skill-categories { display: flex; flex-direction: column; gap: 8px; }
+  .skill-cat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--border-radius-lg, 16px); overflow: hidden; transition: border-color 0.2s; }
+  .skill-cat.open { border-color: var(--border2); }
+  .skill-cat-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; gap: 12px; }
+  .skill-cat-header:hover { background: var(--bg3); }
+  .skill-cat-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .skill-cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .skill-cat-name { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; }
+  .skill-cat-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .scp { font-size: 11px; color: var(--muted); background: var(--bg3); border: 1px solid var(--border); border-radius: 100px; padding: 2px 8px; white-space: nowrap; }
+  .skill-cat-toggle { font-size: 12px; color: var(--muted); transition: transform 0.3s; flex-shrink: 0; }
+  .skill-cat.open .skill-cat-toggle { transform: rotate(180deg); }
+  .skill-cat-body { display: none; padding: 0 1.25rem 1rem; border-top: 1px solid var(--border); }
+  .skill-cat.open .skill-cat-body { display: block; animation: slideDown 0.25s ease; }
+  .skill-tag-grid { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 1rem; }
+  .stag { font-size: 12px; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border2); border-radius: 100px; color: var(--text); }
+
+  @media (max-width: 640px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .details-grid { grid-template-columns: 1fr; }
+    .ph-top { flex-direction: column; }
+    .ph-right { text-align: left; }
+    .nav-links { display: none; }
+    .skill-cat-pills { display: none; }
+  }
+  .inner-timeline { display: flex; flex-direction: column; gap: 0; padding-left: 1.25rem; position: relative; margin-top: 8px; }
+  .inner-timeline::before { content: ''; position: absolute; left: 4px; top: 6px; bottom: 6px; width: 1px; background: var(--border); }
+  .itl-item { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; position: relative; }
+  .itl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; margin-left: -1.25rem; position: relative; z-index: 1; }
+  .itl-body { flex: 1; }
+  .itl-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .itl-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 5px; }
+  .itl-score { display: inline-block; font-family: var(--font-mono); font-size: 10px; color: var(--accent2); background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.15); border-radius: 100px; padding: 2px 10px; }
+</style>
+</head>
+<body>
+
+<div class="orb1"></div>
+<div class="orb2"></div>
+
+<nav>
+  <div class="inner">
+    <div class="nav-brand">Utkarsh Kere</div>
+    <div class="nav-links">
+      <a href="#projects">projects</a>
+      <a href="#skills">skills</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- hero -->
+  <section class="hero fade-in">
+    <div class="hero-eyebrow">ML portfolio · bangalore</div>
+    <h1>Where data meets<br><em>decisions</em></h1>
+    <p class="hero-desc">End-to-end ML projects from classical feature engineering to fine-tuned transformers. Real Kaggle scores, production deployments, deep technical understanding.</p>
+  </section>
+
+  <!-- projects -->
+  <section id="projects">
+    <div class="section-label">projects</div>
+
+    <!-- Project 1 -->
+    <div class="project fade-in" id="proj1">
+      <div class="project-header" onclick="toggleProject('proj1')">
+        <div class="ph-top">
+          <div class="ph-left">
+            <div class="ph-num">01 / Kaggle Competition</div>
+            <div class="ph-title">Quora Question Pairs</div>
+            <div class="ph-sub">NLP · Binary classification · 404,290 question pairs · 63/37 class imbalance</div>
+            <div class="ph-badges">
+              <span class="badge b-purple">NLP</span>
+              <span class="badge b-purple">SBERT</span>
+              <span class="badge b-purple">Transformers</span>
+              <span class="badge b-green">XGBoost</span>
+              <span class="badge b-amber">Word2Vec</span>
+              <span class="badge b-amber">TF-IDF</span>
+            </div>
+          </div>
+          <div class="ph-right">
+            <div class="ph-score-label">log loss</div>
+            <div class="ph-score">0.31</div>
+            <div class="ph-delta">↓ from 0.53 baseline</div>
+          </div>
+        </div>
+        <div class="ph-toggle">
+          <span class="toggle-icon">▼</span>
+          <span>expand details</span>
+        </div>
+      </div>
+      <div class="project-details">
+        <div class="details-grid">
+          <div>
+            <div class="detail-block-title">score progression</div>
+            <div class="detail-row"><span class="detail-key">Phase 2 — TF-IDF + XGBoost</span><span class="detail-val">0.53</span></div>
+            <div class="detail-row"><span class="detail-key">Phase 3 — Word2Vec + XGBoost</span><span class="detail-val">0.51</span></div>
+            <div class="detail-row"><span class="detail-key">Phase 4 — SBERT + XGBoost</span><span class="detail-val">0.39</span></div>
+            <div class="detail-row"><span class="detail-key">Phase 5 — Bayesian XGBoost</span><span class="detail-val">0.31</span></div>
+            <div class="detail-row"><span class="detail-key">Phase 6 — Cross Encoder</span><span class="detail-val">pending ~0.22</span></div>
+          </div>
+          <div>
+            <div class="detail-block-title">dataset & config</div>
+            <div class="detail-row"><span class="detail-key">Dataset size</span><span class="detail-val">404,290 pairs</span></div>
+            <div class="detail-row"><span class="detail-key">Class imbalance</span><span class="detail-val">63% / 37%</span></div>
+            <div class="detail-row"><span class="detail-key">scale_pos_weight</span><span class="detail-val">1.7</span></div>
+            <div class="detail-row"><span class="detail-key">SBERT model</span><span class="detail-val">all-mpnet-base-v2</span></div>
+            <div class="detail-row"><span class="detail-key">Bayesian trials</span><span class="detail-val">50 × 5-fold CV</span></div>
+            <div class="detail-row"><span class="detail-key">Features engineered</span><span class="detail-val">20+</span></div>
+            <div class="detail-row"><span class="detail-key">Evaluation metric</span><span class="detail-val">Log Loss</span></div>
+          </div>
+        </div>
+        <div class="prog-section">
+          <div class="prog-title">model progression (lower log loss = better)</div>
+          <div class="prog-item">
+            <div class="prog-label"><span>TF-IDF + Logistic Regression (Phase 2)</span><span>0.53</span></div>
+            <div class="prog-track"><div class="prog-fill fill-red" style="width:53%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>Word2Vec + XGBoost (Phase 3)</span><span>0.51</span></div>
+            <div class="prog-track"><div class="prog-fill fill-amber" style="width:51%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>Sentence-BERT + XGBoost (Phase 4)</span><span>0.39</span></div>
+            <div class="prog-track"><div class="prog-fill fill-blue" style="width:39%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>Bayesian Tuned XGBoost (Phase 5)</span><span>0.31</span></div>
+            <div class="prog-track"><div class="prog-fill fill-green" style="width:31%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>Cross Encoder (Phase 6 — target)</span><span>~0.22</span></div>
+            <div class="prog-track"><div class="prog-fill" style="width:22%; background: rgba(0,229,160,0.4);"></div></div>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(108,99,255,0.06); border: 1px solid rgba(108,99,255,0.15); border-radius: 10px; font-size: 13px; color: var(--muted); line-height: 1.8;">
+          <strong style="color: var(--text);">key insight:</strong> each phase improvement came from richer semantic representations — TF-IDF (lexical) → Word2Vec (static semantic) → SBERT (contextual) → Cross Encoder (joint attention). Every step unlocked patterns the previous model couldn't see.
+        </div>
+        <div class="prog-section">
+          <div class="prog-title">phase timeline</div>
+          <div class="inner-timeline">
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#D85A30;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Phase 2 — classical ML baseline</div>
+                <div class="itl-desc">TF-IDF, fuzzy matching, word overlap → Logistic Regression + XGBoost. scale_pos_weight=1.7 for 63/37 imbalance</div>
+                <span class="itl-score">log loss 0.53</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#BA7517;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Phase 3 — Word2Vec skip-gram</div>
+                <div class="itl-desc">Custom Word2Vec on Quora corpus. 7 distance features (cosine, euclidean, manhattan). Raw lowercase text — NOT lemmatized to preserve vocab</div>
+                <span class="itl-score">log loss 0.51</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#185FA5;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Phase 4 — Sentence-BERT (all-mpnet-base-v2)</div>
+                <div class="itl-desc">Encoded all 404K pairs. Fixed pd.concat bug (10K → 404K rows). 7 SBERT similarity features added to XGBoost feature set</div>
+                <span class="itl-score">log loss 0.39</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#0F6E56;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Phase 5 — Bayesian hyperparameter tuning</div>
+                <div class="itl-desc">BayesSearchCV with 50 trials × 5-fold CV across 9 XGBoost params. Best config: lr=0.0335, n_estimators=1000, max_depth=8, gamma=1.0, subsample=0.5. Smarter than grid search — learns from each trial ✅</div>
+                <span class="itl-score">log loss 0.31 · ROC-AUC 0.928 · F1 0.813</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:transparent; border:2px dashed #7a7a8a;"></div>
+              <div class="itl-body">
+                <div class="itl-title" style="color:var(--muted);">Phase 6 — Cross Encoder (pending)</div>
+                <div class="itl-desc">quora-roberta-base reads Q1+Q2 jointly. Linear(768→1) → log odds → sigmoid → probability</div>
+                <span class="itl-score" style="color:var(--muted);background:rgba(255,255,255,0.04);border-color:var(--border);">target ~0.22</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project fade-in" id="proj2" style="margin-top: 12px;">
+      <div class="project-header" onclick="toggleProject('proj2')">
+        <div class="ph-top">
+          <div class="ph-left">
+            <div class="ph-num">02 / Practice Dataset</div>
+            <div class="ph-title">Bank Customer Churn — ANN</div>
+            <div class="ph-sub">Deep learning · Binary classification · 10,000 customers · 80/20 class imbalance</div>
+            <div class="ph-badges">
+              <span class="badge b-green">PyTorch</span>
+              <span class="badge b-green">ANN</span>
+              <span class="badge b-purple">BCELoss</span>
+              <span class="badge b-amber">Flask API</span>
+              <span class="badge b-red">Imbalanced data</span>
+            </div>
+          </div>
+          <div class="ph-right">
+            <div class="ph-score-label">ROC-AUC</div>
+            <div class="ph-score">0.863</div>
+            <div class="ph-delta">recall 44% → 63%</div>
+          </div>
+        </div>
+        <div class="ph-toggle">
+          <span class="toggle-icon">▼</span>
+          <span>expand details</span>
+        </div>
+      </div>
+      <div class="project-details">
+        <div class="details-grid">
+          <div>
+            <div class="detail-block-title">model performance</div>
+            <div class="detail-row"><span class="detail-key">ROC-AUC</span><span class="detail-val">0.863</span></div>
+            <div class="detail-row"><span class="detail-key">Log Loss</span><span class="detail-val">0.336</span></div>
+            <div class="detail-row"><span class="detail-key">F1 Score (churn class)</span><span class="detail-val">0.641</span></div>
+            <div class="detail-row"><span class="detail-key">Recall (churn)</span><span class="detail-val">63.1%</span></div>
+            <div class="detail-row"><span class="detail-key">Precision (churn)</span><span class="detail-val">65.2%</span></div>
+            <div class="detail-row"><span class="detail-key">Overall accuracy</span><span class="detail-val">86%</span></div>
+          </div>
+          <div>
+            <div class="detail-block-title">architecture</div>
+            <div class="detail-row"><span class="detail-key">Layers</span><span class="detail-val">Dense 64 → 32 → 1</span></div>
+            <div class="detail-row"><span class="detail-key">Hidden activation</span><span class="detail-val">ReLU</span></div>
+            <div class="detail-row"><span class="detail-key">Output activation</span><span class="detail-val">Sigmoid</span></div>
+            <div class="detail-row"><span class="detail-key">Dropout</span><span class="detail-val">0.3</span></div>
+            <div class="detail-row"><span class="detail-key">Optimizer</span><span class="detail-val">Adam lr=0.001</span></div>
+            <div class="detail-row"><span class="detail-key">pos_weight</span><span class="detail-val">5.0</span></div>
+            <div class="detail-row"><span class="detail-key">Epochs / Batch size</span><span class="detail-val">130 / 32</span></div>
+          </div>
+        </div>
+        <div class="prog-section">
+          <div class="prog-title">threshold tuning — recall improvement</div>
+          <div class="prog-item">
+            <div class="prog-label"><span>threshold 0.5 (default)</span><span>recall 44%</span></div>
+            <div class="prog-track"><div class="prog-fill fill-red" style="width:44%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>threshold 0.4</span><span>recall 51%</span></div>
+            <div class="prog-track"><div class="prog-fill fill-amber" style="width:51%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-label"><span>threshold 0.3 (final)</span><span>recall 63%</span></div>
+            <div class="prog-track"><div class="prog-fill fill-green" style="width:63%"></div></div>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(0,229,160,0.05); border: 1px solid rgba(0,229,160,0.12); border-radius: 10px; font-size: 13px; color: var(--muted); line-height: 1.8;">
+          <strong style="color: var(--text);">key insight:</strong> three levers improved recall — increasing pos_weight from 3.9 to 5.0 forced the model to focus on the minority class, extending training from 100 to 130 epochs refined the weights, and lowering the threshold from 0.5 to 0.3 captured more true positives. deployed as a Flask REST API with a predict_churn() function.
+        </div>
+        <div class="prog-section">
+          <div class="prog-title">project timeline</div>
+          <div class="inner-timeline">
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#185FA5;"></div>
+              <div class="itl-body">
+                <div class="itl-title">EDA — key findings</div>
+                <div class="itl-desc">Churned avg age 44.8 vs 37.4. Germany 32.4% churn rate vs France 16.2%. Inactive members 26.9% vs active 14.3%. 80/20 class imbalance → pos_weight=3.9</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#185FA5;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Preprocessing pipeline</div>
+                <div class="itl-desc">LabelEncode Gender, OneHot Geography (drop_first), StandardScaler (fit train only), stratified 80/20 split, FloatTensors + DataLoader (batch=32)</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#D85A30;"></div>
+              <div class="itl-body">
+                <div class="itl-title">ANN baseline — pos_weight=3.9, threshold=0.5</div>
+                <div class="itl-desc">Dense(64)→ReLU→Dropout(0.3)→Dense(32)→ReLU→Dropout(0.3)→Sigmoid. Adam lr=0.001, 100 epochs</div>
+                <span class="itl-score">recall 44% · AUC 0.858</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#BA7517;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Threshold tuning — 0.5 → 0.4 → 0.3</div>
+                <div class="itl-desc">Lower threshold catches more churners at cost of precision. 0.3 optimal for bank use case where missing a churner &gt;&gt; false alarm cost</div>
+                <span class="itl-score">recall 63% · F1 0.610</span>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#0F6E56;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Final — pos_weight=5.0, epochs=130, threshold=0.3</div>
+                <div class="itl-desc">Increased pos_weight penalises missing churners 5× more. Extended training for weight refinement. Production Flask API with predict_churn() function</div>
+                <span class="itl-score">recall 63.1% · AUC 0.863 · F1 0.641</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project fade-in" id="proj3" style="margin-top: 12px;">
+      <div class="project-header" onclick="toggleProject('proj3')">
+        <div class="ph-top">
+          <div class="ph-left">
+            <div class="ph-num">03 / Kaggle Competition</div>
+            <div class="ph-title">House Prices — Advanced Regression</div>
+            <div class="ph-sub">Regression · Feature engineering · 79 features · Skew correction · Encoding pipeline</div>
+            <div class="ph-badges">
+              <span class="badge b-amber">Regression</span>
+              <span class="badge b-green">LightGBM</span>
+              <span class="badge b-amber">Feature Engineering</span>
+              <span class="badge b-purple">PCA</span>
+              <span class="badge b-red">Target Encoding</span>
+              <span class="badge b-green">Cross Validation</span>
+            </div>
+          </div>
+          <div class="ph-right">
+            <div class="ph-score-label">RMSE</div>
+            <div class="ph-score">0.13</div>
+            <div class="ph-delta">~14% error · log target</div>
+          </div>
+        </div>
+        <div class="ph-toggle">
+          <span class="toggle-icon">▼</span>
+          <span>expand details</span>
+        </div>
+      </div>
+      <div class="project-details">
+        <div class="details-grid">
+          <div>
+            <div class="detail-block-title">EDA & preprocessing</div>
+            <div class="detail-row"><span class="detail-key">Target variable</span><span class="detail-val">SalePrice (right skewed)</span></div>
+            <div class="detail-row"><span class="detail-key">Target transform</span><span class="detail-val">log transform ✅</span></div>
+            <div class="detail-row"><span class="detail-key">Features</span><span class="detail-val">79 housing features</span></div>
+            <div class="detail-row"><span class="detail-key">Feature importance</span><span class="detail-val">LightGBM normalised score</span></div>
+            <div class="detail-row"><span class="detail-key">Features removed</span><span class="detail-val">&lt;1% importance threshold</span></div>
+            <div class="detail-row"><span class="detail-key">Null handling</span><span class="detail-val">has_flag + neighbourhood avg</span></div>
+            <div class="detail-row"><span class="detail-key">Outlier removal</span><span class="detail-val">Area vs SalePrice scatter</span></div>
+          </div>
+          <div>
+            <div class="detail-block-title">model & results</div>
+            <div class="detail-row"><span class="detail-key">Final RMSE</span><span class="detail-val">0.13 (~14% error) ✅</span></div>
+            <div class="detail-row"><span class="detail-key">Models trained</span><span class="detail-val">Linear, Ridge, Lasso, XGBoost, LightGBM</span></div>
+            <div class="detail-row"><span class="detail-key">Selection method</span><span class="detail-val">CV mean RMSE + std dev</span></div>
+            <div class="detail-row"><span class="detail-key">Pipeline</span><span class="detail-val">ColumnTransformer (leakage-safe)</span></div>
+            <div class="detail-row"><span class="detail-key">Skew correction</span><span class="detail-val">log (right) · reflect+log (left)</span></div>
+            <div class="detail-row"><span class="detail-key">Redundancy removal</span><span class="detail-val">correlation &gt; 0.8 dropped</span></div>
+            <div class="detail-row"><span class="detail-key">Encoding</span><span class="detail-val">ordinal + one-hot + target</span></div>
+          </div>
+        </div>
+        <div class="prog-section">
+          <div class="prog-title">end-to-end batch pipeline</div>
+          <div class="inner-timeline">
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#185FA5;"></div>
+              <div class="itl-body">
+                <div class="itl-title">EDA — distribution + importance analysis</div>
+                <div class="itl-desc">SalePrice right-skewed → log transform. LightGBM normalised feature importance (%) to identify where to spend feature engineering effort. Correlation heatmap to find strong predictors. Removed features with &lt;1% importance</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#185FA5;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Null handling — structural absence flags</div>
+                <div class="itl-desc">Nulls where structure is absent (no garage, no basement) → created has_flag binary feature to preserve signal. Remaining nulls filled at neighbourhood level average rather than global average</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#BA7517;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Skew correction + redundancy removal</div>
+                <div class="itl-desc">Right-skewed → log transform. Left-skewed → reflect (MAX+1 - value) then log transform. Correlation &gt; 0.8 between features → dropped one (e.g. GarageArea vs GarageCars removed)</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#BA7517;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Feature creation + outlier removal</div>
+                <div class="itl-desc">New features: total bathroom area, combined 1st+2nd floor area, total porch area, basement total + finished. Outliers removed via Area vs SalePrice scatter inspection</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#0F6E56;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Leakage-safe ColumnTransformer pipeline</div>
+                <div class="itl-desc">Ordinal encoding for quality columns. One-hot for low cardinality categoricals. Target encoding for high cardinality categoricals. StandardScaler for numerical. PCA for linear regression models. All transformations inside single ColumnTransformer — fit on train only to prevent data leakage</div>
+              </div>
+            </div>
+            <div class="itl-item">
+              <div class="itl-dot" style="background:#0F6E56;"></div>
+              <div class="itl-body">
+                <div class="itl-title">Model selection via cross-validation</div>
+                <div class="itl-desc">Trained Linear Regression, Ridge, Lasso, XGBoost and LightGBM. Compared CV mean RMSE and CV std dev across splits — low std = model stable across folds. LightGBM selected as best performer</div>
+                <span class="itl-score">RMSE 0.13 · ~14% error · log-transformed target</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(245,166,35,0.06); border: 1px solid rgba(245,166,35,0.15); border-radius: 10px; font-size: 13px; color: var(--muted); line-height: 1.8;">
+          <strong style="color: var(--text);">key insight:</strong> nulls caused by structural absence (no garage = null GarageArea) carry information — a has_flag captures this signal. All encoding and scaling wrapped inside ColumnTransformer makes the pipeline leakage-safe — transformations fitted on train data only, applied consistently to test. Target encoding for high-cardinality columns prevents one-hot explosion while preserving the category-to-price relationship.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-label">skills</div>
+    <div class="skill-categories">
+
+      <!-- Programming -->
+      <div class="skill-cat" id="scat1">
+        <div class="skill-cat-header" onclick="toggleCat('scat1')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#9b94ff;"></div>
+            <div class="skill-cat-name">Programming</div>
+            <div class="skill-cat-pills">
+              <span class="scp">Python</span>
+              <span class="scp">SQL</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">Python</span>
+            <span class="stag">SQL</span>
+            <span class="stag">Pandas</span>
+            <span class="stag">NumPy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ML & Data Science -->
+      <div class="skill-cat" id="scat2">
+        <div class="skill-cat-header" onclick="toggleCat('scat2')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#00e5a0;"></div>
+            <div class="skill-cat-name">ML &amp; Data Science</div>
+            <div class="skill-cat-pills">
+              <span class="scp">XGBoost</span>
+              <span class="scp">LightGBM</span>
+              <span class="scp">Scikit-learn</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">XGBoost</span>
+            <span class="stag">LightGBM</span>
+            <span class="stag">Scikit-learn</span>
+            <span class="stag">Classification</span>
+            <span class="stag">Regression</span>
+            <span class="stag">Clustering</span>
+            <span class="stag">Predictive Analysis</span>
+            <span class="stag">Bayesian Optimization</span>
+            <span class="stag">Hyperparameter Tuning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ML Systems -->
+      <div class="skill-cat" id="scat3">
+        <div class="skill-cat-header" onclick="toggleCat('scat3')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#f5a623;"></div>
+            <div class="skill-cat-name">ML Systems</div>
+            <div class="skill-cat-pills">
+              <span class="scp">Feature Engineering</span>
+              <span class="scp">Batch Pipelines</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">Feature Engineering</span>
+            <span class="stag">Batch Pipelines</span>
+            <span class="stag">ETL Pipelines</span>
+            <span class="stag">Model Evaluation</span>
+            <span class="stag">PCA</span>
+            <span class="stag">ColumnTransformer</span>
+            <span class="stag">Cross Validation</span>
+            <span class="stag">Leakage-safe Pipelines</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NLP -->
+      <div class="skill-cat" id="scat4">
+        <div class="skill-cat-header" onclick="toggleCat('scat4')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#6c63ff;"></div>
+            <div class="skill-cat-name">NLP</div>
+            <div class="skill-cat-pills">
+              <span class="scp">BERT / SBERT</span>
+              <span class="scp">Word2Vec</span>
+              <span class="scp">TF-IDF</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">Tokenization</span>
+            <span class="stag">BOW / TF-IDF</span>
+            <span class="stag">Word2Vec</span>
+            <span class="stag">BERT / SBERT</span>
+            <span class="stag">Cross Encoder</span>
+            <span class="stag">HuggingFace</span>
+            <span class="stag">Semantic Similarity</span>
+            <span class="stag">Fuzzy Matching</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deep Learning -->
+      <div class="skill-cat" id="scat5">
+        <div class="skill-cat-header" onclick="toggleCat('scat5')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#ff6b6b;"></div>
+            <div class="skill-cat-name">Deep Learning</div>
+            <div class="skill-cat-pills">
+              <span class="scp">PyTorch</span>
+              <span class="scp">ANN</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">PyTorch</span>
+            <span class="stag">ANN</span>
+            <span class="stag">Dropout</span>
+            <span class="stag">BCELoss</span>
+            <span class="stag">Adam Optimizer</span>
+            <span class="stag">Backpropagation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Skills -->
+      <div class="skill-cat" id="scat7">
+        <div class="skill-cat-header" onclick="toggleCat('scat7')">
+          <div class="skill-cat-left">
+            <div class="skill-cat-dot" style="background:#0ea5e9;"></div>
+            <div class="skill-cat-name">Other Skills</div>
+            <div class="skill-cat-pills">
+              <span class="scp">Statistics</span>
+              <span class="scp">EDA</span>
+            </div>
+          </div>
+          <span class="skill-cat-toggle">▼</span>
+        </div>
+        <div class="skill-cat-body">
+          <div class="skill-tag-grid">
+            <span class="stag">Statistics</span>
+            <span class="stag">EDA</span>
+            <span class="stag">Class Imbalance Handling</span>
+            <span class="stag">Precision-Recall Tradeoffs</span>
+            <span class="stag">Threshold Optimization</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- recruiter -->
+  <section id="contact">
+    <div class="recruiter-card fade-in">
+      <div class="recruiter-title">Open to Opportunities</div>
+      <div class="recruiter-desc">Looking for data scientist roles in Bangalore with a focus on NLP, deep learning, or applied ML. I bring deep technical understanding, not just framework knowledge.</div>
+      <div class="recruiter-points">
+        <div class="rp"><div class="rp-dot"></div><div><strong>End-to-end ownership</strong> — from raw data and EDA through feature engineering, model training, evaluation, and production deployment</div></div>
+        <div class="rp"><div class="rp-dot"></div><div><strong>Progressive thinking</strong> — Quora QP score improved across 4 phases (0.53 → 0.39) with clear reasoning at each step</div></div>
+        <div class="rp"><div class="rp-dot"></div><div><strong>Rare NLP depth</strong> — TF-IDF → Word2Vec → SBERT → Cross Encoder with internals understood (log odds, attention, backprop)</div></div>
+        <div class="rp"><div class="rp-dot"></div><div><strong>Business alignment</strong> — threshold tuning, precision-recall tradeoffs, CAP/Gini for banking use cases</div></div>
+      </div>
+      <div style="position: relative; display: inline-block;" id="contact-dropdown-wrapper">
+        <button class="cta-btn" onclick="toggleContactDropdown()" id="contact-btn">
+          get in touch ▾
+        </button>
+      </div>
+      <div id="contact-dropdown" style="
+        display: none;
+        margin-top: 1rem;
+        background: var(--bg3);
+        border: 1px solid var(--border2);
+        border-radius: 12px;
+        padding: 8px;
+        animation: slideDown 0.2s ease;
+      ">
+        <a href="mailto:utkarsh.kere@gmail.com" style="
+          display: flex; align-items: center; gap: 12px;
+          padding: 10px 14px; border-radius: 8px;
+          text-decoration: none; color: var(--text);
+          font-size: 13px; transition: background 0.15s;
+        " onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+          <span style="font-size:15px; width:20px; text-align:center;">✉</span>
+          utkarsh.kere@gmail.com
+        </a>
+        <a href="tel:+919082018652" style="
+          display: flex; align-items: center; gap: 12px;
+          padding: 10px 14px; border-radius: 8px;
+          text-decoration: none; color: var(--text);
+          font-size: 13px; transition: background 0.15s;
+        " onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+          <span style="font-size:15px; width:20px; text-align:center;">✆</span>
+          +91 90820 18652
+        </a>
+        <div style="height:1px; background: var(--border); margin: 4px 8px;"></div>
+        <a href="https://www.linkedin.com/in/utkarsh-kere-29279a234/" target="_blank" style="
+          display: flex; align-items: center; gap: 12px;
+          padding: 10px 14px; border-radius: 8px;
+          text-decoration: none; color: var(--accent2);
+          font-size: 13px; transition: background 0.15s;
+        " onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+          <span style="font-size:15px; width:20px; text-align:center;">↗</span>
+          linkedin profile
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrapper">
+    utkarsh kere · senior business analyst · bangalore ·
+    <a href="https://www.linkedin.com/in/utkarsh-kere-29279a234/"
+       target="_blank"
+       style="color: var(--accent2); text-decoration: none; letter-spacing: 0.05em;">
+      linkedin ↗
+    </a>
+  </div>
+</footer>
+
+<script>
+  function toggleContactDropdown() {
+    const dd  = document.getElementById('contact-dropdown');
+    const btn = document.getElementById('contact-btn');
+    const isOpen = dd.style.display === 'block';
+    dd.style.display = isOpen ? 'none' : 'block';
+    btn.textContent  = isOpen ? 'get in touch ▾' : 'get in touch ▴';
+  }
+
+  function toggleCat(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  function toggleProject(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('open');
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
